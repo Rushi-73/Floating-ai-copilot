@@ -1,0 +1,66 @@
+{
+  "apiControllers": [
+    {
+      "name": "WeatherForecastController",
+      "namespace": "FloatingAICopilot.Controllers",
+      "baseRoute": "/api/weatherforecast",
+      "filePath": "api/src/Controllers/WeatherForecastController.cs",
+      "methods": [
+        {
+          "name": "Get",
+          "httpMethod": "GET",
+          "route": "/api/weatherforecast",
+          "routeName": "GetWeatherForecast",
+          "returnType": "IEnumerable<WeatherForecast>",
+          "returnTypeActual": "Synchronous - not async",
+          "parameters": [],
+          "description": "Retrieves generated list of 5 weather forecasts with random temperatures",
+          "statusCodes": [200],
+          "implementation": "In-memory generation using Enumerable.Range(1,5) with Random.Shared",
+          "refactoringNeeded": true,
+          "refactoringNotes": "Should be async Task<ActionResult<IEnumerable<WeatherForecastResponse>>> with service/repository layer"
+        }
+      ],
+      "dependencies": ["ILogger<WeatherForecastController>"]
+    }
+  ],
+  "dtoModels": [
+    {
+      "name": "WeatherForecast",
+      "namespace": "FloatingAICopilot.Models",
+      "filePath": "api/src/Models/WeatherForecast.cs",
+      "properties": [
+        {
+          "name": "Date",
+          "type": "DateOnly",
+          "nullable": false,
+          "description": "Forecast date"
+        },
+        {
+          "name": "TemperatureC",
+          "type": "int",
+          "nullable": false,
+          "description": "Temperature in Celsius"
+        },
+        {
+          "name": "TemperatureF",
+          "type": "int",
+          "nullable": false,
+          "description": "Temperature in Fahrenheit (calculated)",
+          "calculated": true
+        },
+        {
+          "name": "Summary",
+          "type": "string",
+          "nullable": true,
+          "description": "Weather summary description"
+        }
+      ]
+    }
+  ],
+  "swaggerDocumentation": {
+    "enabled": true,
+    "url": "https://localhost:7001/swagger/index.html",
+    "onlyInDevelopment": true
+  }
+}

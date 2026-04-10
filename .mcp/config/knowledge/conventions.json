@@ -1,0 +1,81 @@
+{
+  "cSharpConventions": {
+    "namespacing": "FloatingAICopilot.{FeatureName}",
+    "namespaceStyle": "File-scoped namespace (e.g., 'namespace FloatingAICopilot.Controllers;' with semicolon)",
+    "examples": ["FloatingAICopilot.Controllers", "FloatingAICopilot.Models"],
+    "classNaming": {
+      "controllers": "{Feature}Controller",
+      "models": "PascalCase entity names",
+      "examples": ["WeatherForecastController", "WeatherForecast"]
+    },
+    "propertyNaming": "PascalCase (e.g., Date, TemperatureC, TemperatureF, Summary)",
+    "methodNaming": "PascalCase (e.g., Get, Post)",
+    "privateFields": "_camelCase prefix (e.g., _logger)",
+    "staticFields": "PascalCase, readonly (e.g., 'static readonly string[] Summaries')",
+    "filePaths": "Match class/namespace structure (Controllers/, Models/)",
+    "attributes": {
+      "classLevel": "[ApiController], [Route(\"api/[controller]\")]",
+      "methodLevel": "[HttpGet(Name = \"GetWeatherForecast\")]",
+      "routing": "[controller] token replaced with lowercase controller name without 'Controller' suffix"
+    },
+    "nullability": "Nullable reference types enabled in .csproj, use '?' for nullable types (e.g., 'string? Summary')"
+  },
+  "typeScriptConventions": {
+    "componentNaming": "{feature}.component.ts",
+    "templateFile": "{feature}.component.html",
+    "styleFile": "{feature}.component.css",
+    "componentDecorator": "standalone: true (all components are standalone, no NgModules)",
+    "imports": "Explicit per-component. CommonModule required for *ngIf, *ngFor, etc.",
+    "classNaming": "{Feature}Component",
+    "propertyNaming": "camelCase (e.g., weatherData, loading, title)",
+    "methodNaming": "camelCase (e.g., fetchWeatherData)",
+    "observableNaming": "$ suffix convention (e.g., weather$, data$) - NOT YET APPLIED in current code",
+    "examples": ["app.component with resource-based routing",
+    "urlPattern": "/api/[controller] → /api/weatherforecast (lowercase)",
+    "httpMethods": "GET for retrieval (POST, PUT, DELETE not yet implemented)",
+    "apiVersion": "Not versioned yet (should be added: /api/v1/...)",
+    "responseFormat": "JSON (automatic via ASP.NET Core)
+  "routingConventions": {
+    "backend": "REST convention",
+    "urlPattern": "/api/[controller]",
+    "httpMethods": "GET, POST, PUT, DELETE mapped to CRUD",
+    "examples": ["GET /api/weatherforecast"]
+  },
+  "filecurrentState": "Minimal structure with Controllers/ and Models/ only",
+      "root": "api/src/",
+      "folders": ["Controllers/", "Models/"],
+      "missingFolders": ["Services/", "Repositories/", "Validators/", "Middleware/", "Extensions/"],
+      "singleResponsibility": "Controllers for HTTP only; Models for data shapes. Service & Repository layers TODO."
+    },
+    "frontend": {
+      "currentState": "Minimal structure with app root component only",
+      "root": "ui/src/app/",
+      "currentFolders": ["(none - flat structure)"],. Currently returns array of WeatherForecast objects.",
+    "frontend": "TypeScript interfaces matching backend JSON (currently typed as 'any[]', should be WeatherForecast[])"
+  },
+  "codeQualityNotes": {
+    "backendIssues": [
+      "Synchronous method (should be async Task<ActionResult<T>>)",
+      "Logger injected but not used",
+      "Business logic in controller (should be in Service)",
+      "No error handling (missing try-catch, validation)",
+      "Static data generation (should be from Service/Repository)"
+    ],
+    "frontendIssues": [
+      "Using 'any' type (should use strict types)",
+      "Direct HttpClient in component (should be in Service)",
+      "No unsubscribe pattern (missing takeUntil or async pipe)",
+      "Loading state management is basic (should be Observable)",
+      "Hardcoded API URL (should be in environment/config)"
+    ]p.component.css", "app.config.ts", "app.routes.ts"],
+      "missingFolders": ["core/", "shared/", "features/", "layout/", "services/", "models/"],
+      "perComponent": "component.ts, component.html, component.css together (when more components added)
+      "root": "src/app/",
+      "perComponent": "component.ts, component.html, component.css together"
+    }
+  },
+  "outputFormatting": {
+    "backend": "JSON (automatic via ASP.NET Core serialization)",
+    "frontend": "TypeScript interfaces matching backend DTOs"
+  }
+}

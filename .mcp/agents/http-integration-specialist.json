@@ -1,0 +1,126 @@
+{
+  "name": "http-integration-specialist",
+  "domain": "HTTP Communication & CORS Configuration",
+  "description": "Specialized agent for managing HTTP communication between Angular frontend and .NET backend",
+  "scope": "API integration, CORS policies, HTTP client configuration, SSL/TLS handling",
+  "rules": [
+    {
+      "rule": "CORS Policy Configuration",
+      "description": "CORS is centrally configured in Program.cs, not per-controller",
+      "location": "api/src/Program.cs lines 11-20",
+      "currentConfig": {
+        "policyName": "AllowAngular",
+        "allowedOrigins": ["http://localhost:4200"],
+        "allowedMethods": ["*"],
+        "allowedHeaders": ["*"]
+      },
+      "whenToModify": "Only when adding new origin, never modify per-endpoint"
+    },
+    {
+      "rule": "Frontend API Base URL",
+      "description": "Angular components must use absolute URL to backend: https://localhost:7001",
+      "hardcoded": true,
+      "location": "Any component making API calls",
+      "example": "this.http.get('https://localhost:7001/api/weatherforecast')",
+      "futureEnhancement": "Extract to environment.ts for env-based configuration"
+    },
+    {
+      "rule": "SSL/TLS Certificates",
+      "description": "Backend runs on HTTPS localhost:7001, frontend on HTTP localhost:4200",
+      "mixedContent": "Browser allows HTTP frontend → HTTPS backend in localhost dev",
+      "production": "Ensure same protocol (HTTPS everywhere) in production"
+    },
+    {
+      "rule": "HttpClient Module",
+      "description": "Must be provided globally in app.config.ts via provideHttpClient()",
+      "location": "ui/src/app/app.config.ts",
+      "configuration": "export const appConfig: ApplicationConfig = { providers: [provideHttpClient(), ...] }"
+    },
+    {
+      "rule": "HTTP Error Handling",
+      "description": "Always provide error callback in subscribe to handle network failures",
+      "pattern": "subscribe({ next: (data) => { }, error: (err) => { console.error(err); } })",
+      "common": "404 Not Found, 500 Server Error, Network timeout, CORS blocked"
+    },
+    {
+      "rule": "No Authentication Yet",
+      "description": "No Bearer tokens, JWT, or auth headers currently implemented",
+      "whenNeeded": "Add HttpInterceptor in app.config.ts and services to inject auth headers"
+    },
+    {
+      "rule": "Response Type Declaration",
+      "description": "Always declare response type in HttpClient methods for type safety",
+      "correct": "this.http.get<WeatherForecast[]>(...)",
+      "avoid": "this.http.get(...) without type parameter"
+    },
+    {
+      "rule": "Request Timeouts",
+      "description": "No timeout configured by default. Consider adding for production",
+      "enhancement": "Use timeout operator from RxJS: pipe(timeout(5000))"
+    },
+    {
+      "rule": "Content-Type Headers",
+      "description": "ASP.NET Core automatically handles Content-Type: application/json",
+      "noAction": "Required, Angular HttpClient defaults to JSON"
+    },
+    {
+      "rule": "Swagger Documentation",
+      "description": "API documentation available at https://localhost:7001/swagger/index.html",
+      "onlyDev": "Only enabled when IsDevelopment() is true",
+      "useCase": "Reference for API endpoints before implementation"
+    }
+  ],
+  "commonPatterns": {
+    "basicApiCall": {
+      "description": "Basic pattern for calling backend API from Angular component",
+      "template": "import { HttpClient } from '@angular/common/http';\n\nexport class MyComponent {\n  data: any[] = [];\n\n  constructor(private http: HttpClient) {}\n\n  ngOnInit(): void {\n    this.http.get<any[]>('https://localhost:7001/api/endpoint')\n      .subscribe({\n        next: (response) => {\n          this.data = response;\n        },\n        error: (error) => {\n          console.error('API Error:', error);\n        }\n      });\n  }\n}"
+    },
+    "apiService": {
+      "description": "Dedicated service for API communication (best practice)",
+      "template": "import { HttpClient } from '@angular/common/http';\nimport { Injectable } from '@angular/core';\nimport { Observable } from 'rxjs';\n\n@Injectable({ providedIn: 'root' })\nexport class ApiService {\n  private baseUrl = 'https://localhost:7001/api';\n\n  constructor(private http: HttpClient) {}\n\n  get<T>(endpoint: string): Observable<T> {\n    return this.http.get<T>(`${this.baseUrl}/${endpoint}`);\n  }\n\n  post<T>(endpoint: string, data: any): Observable<T> {\n    return this.http.post<T>(`${this.baseUrl}/${endpoint}`, data);\n  }\n\n  put<T>(endpoint: string, data: any): Observable<T> {\n    return this.http.put<T>(`${this.baseUrl}/${endpoint}`, data);\n  }\n\n  delete<T>(endpoint: string): Observable<T> {\n    return this.http.delete<T>(`${this.baseUrl}/${endpoint}`);\n  }\n}"
+    },
+    "corsAddition": {
+      "description": "How to add a new allowed origin to CORS",
+      "steps": [
+        "Edit api/src/Program.cs",
+        "Find builder.Services.AddCors block",
+        "Add new origin URL to .WithOrigins() array",
+        "Example: .WithOrigins('http://localhost:4200', 'https://mydomain.com')",
+        "Rebuild and restart backend"
+      ]
+    }
+  },
+  "developmentSetup": {
+    "backendUrl": "https://localhost:7001",
+    "backendPort": 7001,
+    "frontendUrl": "http://localhost:4200",
+    "frontendPort": 4200,
+    "corsEnabled": true,
+    "debuggingTools": [
+      "Chrome DevTools Network tab for HTTP inspection",
+      "Swagger UI at https://localhost:7001/swagger",
+      "Browser Console for error messages"
+    ]
+  },
+  "troubleshooting": {
+    "corsError": {
+      "symptom": "CORS policy: No 'Access-Control-Allow-Origin' header",
+      "causes": [
+        "Frontend origin not in CORS allowlist",
+        "Backend CORS not enabled",
+        "Wrong protocol/port"
+      ],
+      "solution": "Verify origin in Program.cs CORS policy, restart backend"
+    },
+    "connectionRefused": {
+      "symptom": "ERR_CONNECTION_REFUSED localhost:7001",
+      "causes": ["Backend not running", "Wrong port", "Firewall blocking"],
+      "solution": "Ensure backend running: cd api/src && dotnet run"
+    },
+    "certificateError": {
+      "symptom": "certificate not trusted / ERR_CERT_AUTHORITY_INVALID",
+      "causes": ["Self-signed certificate on localhost", "Browser security"],
+      "solution": "Https on localhost is normal in dev, browser will warn but still connect"
+    }
+  }
+}

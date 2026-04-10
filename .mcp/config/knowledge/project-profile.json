@@ -1,0 +1,61 @@
+{
+  "projectName": "Floating AI Copilot",
+  "projectVersion": "1.0.0",
+  "projectType": "Full-Stack Monorepo",
+  "description": "Full-stack application with .NET Core REST API backend and Angular frontend",
+  "techStack": {
+    "backend": {
+      "framework": ".NET 10 (ASP.NET Core)",
+      "language": "C#",
+      "bootstrapper": "Program.cs",
+      "webServer": "Kestrel",
+      "port": 7001,
+      "protocol": "HTTPS",
+      "packageManager": "NuGet"
+    },
+    "frontend": {
+      "framework": "Angular 19",
+      "language": "TypeScript 5.6",
+      "buildTool": "Angular CLI 19",
+      "packageManager": "npm",
+      "port": 4200,
+      "protocol": "HTTP",
+      "componentArchitecture": "Standalone Components"
+    },
+    "communication": {
+      "apiPattern": "RESTful HTTP",
+      "corsPolicy": "Configured (http://localhost:4200)",
+      "apiDocumentation": "Swagger/OpenAPI at /swagger"
+    }
+  },
+  "folderStructure": {
+    "api/src": "Backend project root",
+    "api/src/Controllers": "ASP.NET Core controllers",
+    "api/src/Models": "Data models/DTOs",
+    "ui/src": "Frontend project root",
+    "ui/src/app": "Angular application components",
+    "ui/public": "Static assets"
+  },
+  "documentationFiles": [
+    "README.md",
+    "api/README.md",
+    "ui/README.md",
+    ".github/copilot-instructions.md"
+  ],
+  "configurationFiles": {
+    "backend": [
+      "Program.cs",
+      "appsettings.json",
+      "appsettings.Development.json",
+      "FloatingAICopilot.csproj"
+    ],
+    "frontend": [
+      "angular.json",
+      "package.json",
+      "tsconfig.json",
+      "tsconfig.app.json",
+      "tsconfig.spec.json"
+    ]
+  },
+  "deploymentModel": "Independent - Backend and Frontend can be deployed separately"
+}

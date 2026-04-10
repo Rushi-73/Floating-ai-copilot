@@ -1,0 +1,57 @@
+{
+  "architecturePattern": "N-Tier REST API with Standalone Angular Frontend",
+  "backendLayers": {
+    "presentationLayer": {
+      "technology": "ASP.NET Core Controllers",
+      "location": "Controllers/",
+      "pattern": "[Feature]Controller",
+      "inheritance": "ControllerBase"
+    },
+    "dataLayer": {
+      "technology": "In-memory data generation (currently no persistence layer). Uses Enumerable.Range() and Random in controller",
+      "location": "Models/",
+      "pattern": "DTOs/POCOs (WeatherForecast model defined)",
+      "note": "No Repository or Service layer yet - business logic embedded in controller"
+    },
+    "crossCuttingConcerns": {
+      "dependencyInjection": "ASP.NET Core built-in DI container",
+      "logging": "ILogger<T>",
+      "cors": "AddCors() middleware",
+      "swagger": "Swashbuckle.AspNetCore"
+    }
+  },
+  "frontendLayers": {
+    "presentationLayer": {
+      "technology": "Angular Standalone Components",
+      "location": "src/app/",
+      "pattern": ".component.ts with external templates",
+      "interop": "HttpClient for API calls"
+    },
+    "routingLayer": {
+      "technology": "Angular Router (v19)",
+      "location": "app.routes.ts",
+      "pattern": "Routes[] exported constant"
+    },
+    "configurationLayer": {
+      "technology": "ApplicationConfig",
+      "location": "app.config.ts",
+      "pattern": "provideX() functions"
+    }
+  },
+  "asyncPatterns": {
+    "backend": "Currently Synchronous (WeatherForecastController.Get returns IEnumerable directly, NOT async/await). Should be refactored to async Task<ActionResult<T>> for scalability",
+    "frontend": "RxJS Observables with .subscribe() pattern"
+  },
+  "errorHandling": {
+    "backend": "Default ASP.NET Core exception middleware",
+    "frontend": "Observable error callback in subscribe"
+  },
+  "dependencyInjection": {
+    "backend": "Constructor injection via ASP.NET Core DI",
+    "frontend": "Constructor injection via Angular DI"
+  },
+  "nullability": {
+    "backend": "Nullable reference types enabled (#nullable enable)",
+    "frontend": "TypeScript strict null checking enabled"
+  }
+}

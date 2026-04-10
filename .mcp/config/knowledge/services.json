@@ -1,0 +1,48 @@
+{
+  "services": [
+    {
+      "name": "None implemented",
+      "note": "Service layer not yet created. Business logic currently in WeatherForecastController"
+    }
+  ],
+  "middleware": [
+    {
+      "name": "CORS Middleware",
+      "location": "Program.cs",
+      "policyName": "AllowAngular",
+      "allowedOrigins": ["http://localhost:4200"],
+      "allowedMethods": ["GET", "POST", "PUT", "DELETE", "PATCH"],
+      "allowedHeaders": ["*"]
+    },
+    {
+      "name": "HTTPS Redirection",
+      "location": "Program.cs",
+      "active": true
+    },
+    {
+      "name": "Authorization",
+      "location": "Program.cs",
+      "active": true,
+      "note": "Currently no authorization policy configured"
+    }
+  ],
+  "builtInServices": [
+    {
+      "name": "ILogger<T>",
+      "framework": "ASP.NET Core",
+      "usage": "Injected in WeatherForecastController"
+    },
+    {
+      "name": "HttpClient",
+      "framework": "Angular",
+      "usage": "Injected in AppComponent for API communication"
+    }
+  ],
+  "externalServices": [
+    {
+      "name": "None",
+      "status": "No external service integrations currently"
+    }
+  ],
+  "note": "This is a minimal project with no complex service layer yet. Services can be added under Services/ folder following dependency injection pattern."
+}

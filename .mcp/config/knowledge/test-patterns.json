@@ -1,0 +1,67 @@
+{
+  "backend": {
+    "framework": "Not yet configured",
+    "recommendedFramework": "xUnit 2.8+ (preferred for .NET modern apps)",
+    "alternativeFrameworks": "NUnit 4+, MSTest",
+    "mockingFramework": "Moq 4.20+",
+    "setupInstructions": "1. Add test project: dotnet new xunit -n FloatingAICopilot.Tests\n2. Add Moq NuGet package: dotnet add package Moq\n3. Reference main project: dotnet add reference ../FloatingAICopilot.csproj",
+    "testClassNaming": "{Class}Tests",
+    "testMethodNaming": "{Method}_{Scenario}_{Expected}",
+    "examples": [
+      "WeatherForecastControllerTests",
+      "Get_WithValidRequest_ReturnsOkResult",
+      "Get_WhenDataEmpty_ReturnsEmptyList"
+    ],
+    "currentTestGaps": [
+      "No unit tests for WeatherForecastController",
+      "No tests for WeatherForecast model",
+      "No integration tests",
+      "No API endpoint tests"
+    ]
+  },
+  "frontend": {
+    "framework": "Jasmine 5.1.0",
+    "runner": "Karma 6.4.0",
+    "coverage": "karma-coverage 2.2.0",
+    "testFiles": "*.spec.ts",
+    "configFile": "karma.conf.js",
+    "commands": {
+      "run": "npm test",
+      "coverage": "ng test --code-coverage",
+      "watchMode": "npm test -- --watch"
+    },
+    "conventions": {
+      "testFileNaming": "{component}.spec.ts",
+      "testSuite": "describe('{Component}', () => {  })",
+      "testCase": "it('should...', () => { expect(...).toBe(...); })"
+    },
+    "devDependencies": [
+      "@types/jasmine (~5.1.0)",
+      "jasmine-core (~5.1.0)",
+      "karma (~6.4.0)",
+      "karma-chrome-launcher (~3.2.0)",
+      "karma-coverage (~2.2.0)",
+      "karma-jasmine (~5.1.0)",
+      "karma-jasmine-html-reporter (~2.1.0)"
+    ],
+    "currentTestGaps": [
+      "No unit tPRIORITY: Create WeatherForecastControllerTests with 3 test cases: Valid request, Empty data, Error handling",
+    "frontend": "PRIORITY: Create AppComponent.spec.ts testing: component initialization, httpClient call, data binding",
+    "coverage": "Target minimum 70% coverage for critical paths (controller/service logic)",
+    "nextPhase": "Add integration tests and E2E tests when services layer is implemented"
+  },
+  "bestPractices": {
+    "isolated": "Mock all dependencies (HttpClient, Services)",
+    "naming": "Test names should read like documentation",
+    "aar": "Arrange-Act-Assert pattern for test structure",
+    "oneAssertion": "One logical assertion per test (multiple related assertions OK)",
+    "setup": "Use beforeEach() for common setup, afterEach() for cleanup
+      "No E2E tests (Cypress not configured)",
+      "No tests for routing"
+    ]
+  },
+  "recommendations": {
+    "backend": "Add unit tests for controllers and models",
+    "frontend": "Create spec files for existing components (AppComponent.spec.ts)"
+  }
+}

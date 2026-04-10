@@ -1,0 +1,152 @@
+{
+  "name": "angular-component-specialist",
+  "domain": "Angular Standalone Component Development",
+  "description": "Specialized agent for Angular 19 standalone component development following the Floating AI Copilot conventions",
+  "scope": "Angular components, services, routing, and state management",
+  "rules": [
+    {
+      "rule": "Standalone Components",
+      "description": "All components must use standalone: true pattern",
+      "requires": "No NgModule definitions, each component explicitly imports needed modules",
+      "template": "@Component({\n  selector: 'app-feature',\n  standalone: true,\n  imports: [CommonModule, HttpClientModule],\n  templateUrl: './feature.component.html',\n  styleUrls: ['./feature.component.css']\n})"
+    },
+    {
+      "rule": "Component Naming",
+      "description": "Components follow {feature}.component.ts naming with matching .html and .css files",
+      "structure": "Each component has 3 files: .ts, .html, .css in same directory",
+      "examples": [
+        "app.component.ts, app.component.html, app.component.css",
+        "weather.component.ts, weather.component.html, weather.component.css"
+      ]
+    },
+    {
+      "rule": "Class Naming",
+      "description": "Component classes use {Feature}Component naming with PascalCase",
+      "examples": [
+        "export class AppComponent implements OnInit { }",
+        "export class WeatherComponent implements OnInit { }"
+      ]
+    },
+    {
+      "rule": "Imports Strategy",
+      "description": "CommonModule required for *ngIf, *ngFor, async pipe. HttpClientModule for API calls.",
+      "required": [
+        "import { Component } from '@angular/core'",
+        "import { CommonModule } from '@angular/common'",
+        "import { HttpClient } from '@angular/common/http'"
+      ]
+    },
+    {
+      "rule": "Dependency Injection",
+      "description": "Inject services via constructor, Angular DI automatically resolves from app.config.ts providers",
+      "template": "constructor(private http: HttpClient) { }",
+      "globalProviders": "provideHttpClient(), provideRouter(routes), provideAnimations() in app.config.ts"
+    },
+    {
+      "rule": "API Communication",
+      "description": "Use HttpClient.get<Type>(URL) with .subscribe({ next, error }) pattern",
+      "baseUrl": "https://localhost:7001",
+      "corsOrigin": "CORS policy configured on backend for http://localhost:4200",
+      "template": "this.http.get<any[]>('https://localhost:7001/api/endpoint').subscribe({ next: (data) => { }, error: (err) => { } })"
+    },
+    {
+      "rule": "Lifecycle Hooks",
+      "description": "Implement OnInit for initialization logic (data fetching, subscriptions)",
+      "template": "export class Feature implements OnInit { ngOnInit(): void { } }"
+    },
+    {
+      "rule": "Routing",
+      "description": "Routes defined in app.routes.ts as Routes[] constant, imported into app.config.ts",
+      "template": "export const routes: Routes = [{ path: 'feature', component: FeatureComponent }];"
+    },
+    {
+      "rule": "Error Handling",
+      "description": "Handle errors in subscribe error callback, log to console for debugging",
+      "template": "error: (error) => { console.error('Error:', error); this.loading = false; }"
+    },
+    {
+      "rule": "Loading States",
+      "description": "Use boolean flags for loading states, bind to templates for UX feedback",
+      "example": "loading = false; ... this.loading = true; ... this.loading = false;"
+    },
+    {
+      "rule": "TypeScript Strict Mode",
+      "description": "Strict null checking enabled, declare types explicitly",
+      "tsconfig": "tsconfig.json has strict: true"
+    },
+    {
+      "rule": "Testing",
+      "description": "Test files follow {component}.spec.ts naming, use Jasmine describe/it blocks",
+      "framework": "Jasmine 5.1.0 with Karma runner",
+      "command": "npm test"
+    }
+  ],
+  "commonPatterns": {
+    "basicComponent": {
+      "description": "Pattern for a basic Angular 19 standalone component",
+      "template": "import { Component, OnInit } from '@angular/core';\nimport { CommonModule } from '@angular/common';\nimport { HttpClient } from '@angular/common/http';\n\n@Component({\n  selector: 'app-feature',\n  standalone: true,\n  imports: [CommonModule],\n  templateUrl: './feature.component.html',\n  styleUrls: ['./feature.component.css']\n})\nexport class FeatureComponent implements OnInit {\n  data: any[] = [];\n  loading = false;\n\n  constructor(private http: HttpClient) {}\n\n  ngOnInit(): void {\n    this.fetchData();\n  }\n\n  fetchData(): void {\n    this.loading = true;\n    this.http.get<any[]>('https://localhost:7001/api/endpoint').subscribe({\n      next: (response) => {\n        this.data = response;\n        this.loading = false;\n      },\n      error: (error) => {\n        console.error('Error fetching data:', error);\n        this.loading = false;\n      }\n    });\n  }\n}"
+    },
+    "httpService": {
+      "description": "Pattern for a dedicated HTTP service",
+      "template": "import { Injectable } from '@angular/core';\nimport { HttpClient } from '@angular/common/http';\nimport { Observable } from 'rxjs';\n\n@Injectable({ providedIn: 'root' })\nexport class FeatureService {\n  private readonly apiUrl = 'https://localhost:7001/api';\n\n  constructor(private http: HttpClient) {}\n\n  getFeatures(): Observable<any[]> {\n    return this.http.get<any[]>(`${this.apiUrl}/feature`);\n  }\n}"
+    }
+  },
+  "implementationStatus": {
+    "currentState": "Minimal MVP with single root component making direct HTTP calls",
+    "completedTasks": [
+      "AppComponent with standalone: true setup",
+      "Angular 19 with RxJS observable support",
+      "Basic HTTP client integration working",
+      "Component template and styling structure",
+      "Routing configuration ready (app.routes.ts)"
+    ],
+    "criticalIssues": [
+      "MUST REFACTOR: HttpClient directly in component (line 31-37), should be in Service",
+      "MUST REFACTOR: Using 'any' type instead of typed interfaces",
+      "Memory leak risk: No unsubscribe pattern (missing takeUntil or async pipe)",
+      "Hardcoded API URL 'https://localhost:7001/api/weatherforecast' in component"
+    ],
+    "todoInOrder": [
+      "Create core/ folder structure with api.service.ts",
+      "Move HttpClient logic from AppComponent to api.service.ts",
+      "Create weather.service.ts in features/weather/services/",
+      "Extract API base URL to environment.ts",
+      "Create shared/ folder with reusable components",
+      "Refactor AppComponent to inject service",
+      "Add takeUntil(destroy$) pattern or use async pipe in template",
+      "Create typed interfaces (WeatherForecast, ApiResponse)",
+      "Add global error handling service",
+      "Create unit tests with Jasmine (AppComponent.spec.ts)"
+    ]
+  },
+  "fileLocations": {
+    "currentFiles": [
+      "ui/src/app/app.component.ts (Root component with HTTP logic)",
+      "ui/src/app/app.component.html (Template)",
+      "ui/src/app/app.component.css (Styles)",
+      "ui/src/app/app.config.ts (Global providers)",
+      "ui/src/app/app.routes.ts (Routing definition)",
+      "ui/src/main.ts (Bootstrap)"
+    ],
+    "nextToCreate": [
+      "ui/src/app/core/services/api.service.ts",
+      "ui/src/app/core/services/error.service.ts",
+      "ui/src/app/shared/components/loading-spinner/",
+      "ui/src/app/features/weather/services/weather.service.ts",
+      "ui/src/app/features/weather/models/weather.models.ts",
+      "ui/src/app/layout/header/"
+    ],
+    "existingLocations": {
+      "components": "ui/src/app/ (only AppComponent currently)",
+      "services": "ui/src/app/services/ (TO CREATE)",
+      "routes": "ui/src/app/app.routes.ts",
+      "configuration": "ui/src/app/app.config.ts",
+      "bootstrap": "ui/src/main.ts"
+    }
+  },
+  "frameworkVersion": "Angular 19",
+  "typeScriptVersion": "5.6",
+  "devServer": "ng serve @ http://localhost:4200",
+  "buildCommand": "ng build @ production files in dist/",
+  "testCommand": "ng test @ Karma+Jasmine"
+}

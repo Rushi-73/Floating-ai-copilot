@@ -1,0 +1,65 @@
+{
+  "classes": [
+    {
+      "name": "WeatherForecastController",
+      "file": "api/src/Controllers/WeatherForecastController.cs",
+      "namespace": "FloatingAICopilot.Controllers",
+      "inherits": "ControllerBase",
+      "dependsOn": [
+        {
+          "type": "ILogger<WeatherForecastController>",
+          "injectionType": "Constructor",
+          "source": "ASP.NET Core DI",
+          "usage": "Injected but not yet used for logging"
+        }
+      ],
+      "directDependencies": [
+        "System",
+        "System.Linq",
+        "FloatingAICopilot.Models",
+        "Microsoft.AspNetCore.Mvc"
+      ],
+      "uses": ["WeatherForecast"],
+      "usedBy": ["HTTP routing"],
+      "notes": "Controller contains business logic (data generation) that should be in Service layer"
+    },
+    {
+      "name": "WeatherForecast",
+      "file": "api/src/Models/WeatherForecast.cs",
+      "namespace": "FloatingAICopilot.Models",
+      "inherits": null,
+      "dependsOn": [],
+      "uses": [],
+      "usedBy": ["WeatherForecastController"]
+    },
+    {
+      "name": "AppComponent",
+      "file": "ui/src/app/app.component.ts",
+      "namespace": "app",
+      "inherits": null,
+      "dependsOn": [
+        {
+          "type": "HttpClient",
+          "injectionType": "Constructor",
+          "source": "Angular DI"
+        }
+      ],
+      "uses": [],
+      "usedBy": []
+    }
+  ],
+  "externalDependencies": {
+    "backend": [
+      "Microsoft.AspNetCore.OpenApi (^10.0.0)",
+      "Swashbuckle.AspNetCore (^6.4.6)"
+    ],
+    "frontend": [
+      "@angular/core (^19.0.0)",
+      "@angular/common (^19.0.0)",
+      "@angular/platform-browser (^19.0.0)",
+      "@angular/router (^19.0.0)",
+      "rxjs (^7.8.0)"
+    ]
+  },
+  "circularDependencies": []
+}

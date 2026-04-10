@@ -1,0 +1,116 @@
+{
+  "name": "dotnet-api-specialist",
+  "domain": ".NET REST API Development",
+  "description": "Specialized agent for ASP.NET Core 10 REST API development following the Floating AI Copilot conventions",
+  "scope": "Backend API controllers, models, services, and middleware",
+  "rules": [
+    {
+      "rule": "Namespace Convention",
+      "description": "All C# classes must use namespace pattern FloatingAICopilot.{FeatureName}",
+      "examples": [
+        "namespace FloatingAICopilot.Controllers;",
+        "namespace FloatingAICopilot.Models;",
+        "namespace FloatingAICopilot.Services;"
+      ]
+    },
+    {
+      "rule": "Controller Inheritance",
+      "description": "Controllers must inherit from ControllerBase and have [ApiController] + [Route] attributes",
+      "template": "[ApiController]\n[Route(\"api/[controller]\")]\npublic class {Feature}Controller : ControllerBase { }"
+    },
+    {
+      "rule": "HTTP Method Attributes",
+      "description": "Use explicit [HttpGet], [HttpPost], [HttpPut], [HttpDelete], [HttpPatch] attributes",
+      "examples": [
+        "[HttpGet(Name = \"GetItem\")]",
+        "[HttpPost]",
+        "[HttpPut(\"{id}\")]",
+        "[HttpDelete(\"{id}\")]"
+      ]
+    },
+    {
+      "rule": "Dependency Injection",
+      "description": "Inject dependencies via constructor parameters, ASP.NET Core DI will automatically resolve",
+      "template": "public {Feature}Controller(IService service, ILogger<{Feature}Controller> logger) { }"
+    },
+    {
+      "rule": "Model/DTO Naming",
+      "description": "Models should be POCOs in Models/ folder with PascalCase properties",
+      "nullable": "Enable #nullable enable in .csproj, use ? for optional properties"
+    },
+    {
+      "rule": "CORS Policy",
+      "description": "CORS is already configured in Program.cs for http://localhost:4200. No additional configuration needed per endpoint.",
+      "location": "Program.cs lines 11-20"
+    },
+    {
+      "rule": "Response Types",
+      "description": "Return appropriate HTTP status: 200 (Ok), 201 (Created), 204 (NoContent), 400 (BadRequest), 404 (NotFound), 500 (InternalServerError)",
+      "examples": [
+        "return Ok(data);",
+        "return Created(nameof(GetItem), createdItem);",
+        "return NotFound();",
+        "return BadRequest(ModelState);"
+      ]
+    },
+    {
+      "rule": "Logging",
+      "description": "Use ILogger<T> for logging, injected via DI",
+      "example": "_logger.LogInformation(\"Processing request for {feature}\", featureName);"
+    },
+    {
+      "rule": "Error Handling",
+      "description": "Use try-catch sparingly. ASP.NET Core middleware handles exceptions. Throw appropriate exceptions.",
+      "recommendation": "Consider custom exception middleware for uniform error responses"
+    },
+    {
+      "rule": "Testing",
+      "description": "Test naming convention: {ControllerName}Tests with method names {Method}_{Scenario}_{Expected}",
+      "framework": "Use xUnit with Moq for mocking services"
+    }
+  ],
+  "commonPatterns": {
+    "basicController": {
+      "description": "Pattern for a basic CRUD controller",
+      "template": "using FloatingAICopilot.Models;\nusing Microsoft.AspNetCore.Mvc;\n\nnamespace FloatingAICopilot.Controllers;\n\n[ApiController]\n[Route(\"api/[controller]\")]\npublic class {Feature}Controller : ControllerBase\n{\n    private readonly ILogger<{Feature}Controller> _logger;\n\n    public {Feature}Controller(ILogger<{Feature}Controller> logger)\n    {\n        _logger = logger;\n    }\n\n    [HttpGet]\n    public IActionResult GetAll() => Ok(new List<{Model}>());\n\n    [HttpGet(\"{id}\")]\n    public IActionResult Get(int id) => Ok(new {Model}());\n\n    [HttpPost]\n    public IActionResult Create({Model} model) => Created(nameof(Get), model);\n\n    [HttpPut(\"{id}\")]\n    public IActionResult Update(int id, {Model} model) => Ok(model);\n\n    [HttpDelete(\"{id}\")]\n    public IActionResult Delete(int id) => NoContent();\n}"
+    }
+  },
+  "implementationStatus": {
+    "currentState": "Minimal MVP with synchronous API endpoint",
+    "completedTasks": [
+      "Basic HTTP GET controller endpoint working",
+      "CORS policy configured and working",
+      "Swagger/OpenAPI generation enabled",
+      "Nullable reference types enabled in project"
+    ],
+    "criticalIssues": [
+      "MUST REFACTOR: Get() is synchronous, should be async Task<ActionResult<T>>",
+      "MUST REFACTOR: Business logic (data generation) in controller, should be in Service",
+      "Logger injected but not used - add logging statements"
+    ],
+    "todoInOrder": [
+      "Refactor Get() to async Task and return ActionResult<T>",
+      "Create Services/ folder and IWeatherService interface",
+      "Create Repositories/ folder and IWeatherRepository interface",
+      "Add FluentValidation for input validation",
+      "Create xUnit test project with initial tests",
+      "Add ExceptionHandlingMiddleware to Program.cs",
+      "Add Serilog for structured logging",
+      "Implement ServiceResult<T> pattern for error handling"
+    ]
+  },
+  "fileLocations": {
+    "controllers": "api/src/Controllers/ (WeatherForecastController.cs exists)",
+    "models": "api/src/Models/ (WeatherForecast.cs exists)",
+    "services": "api/src/Services/ (TO CREATE)",
+    "repositories": "api/src/Repositories/ (TO CREATE)",
+    "middleware": "api/src/Middleware/ (TO CREATE)",
+    "configuration": "api/src/Program.cs",
+    "settings": "api/src/appsettings.json",
+    "developmentSettings": "api/src/appsettings.Development.json"
+  },
+  "frameworkVersion": ".NET 10",
+  "sdkVersion": "Microsoft.NET.Sdk.Web",
+  "targetFramework": "net10.0",
+  "nullability": "enabled"
+}

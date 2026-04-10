@@ -1,0 +1,158 @@
+{
+  "name": "build-deployment-specialist",
+  "domain": "Build, Configuration & Deployment",
+  "description": "Specialized agent for managing builds, configurations, and deployment of Floating AI Copilot stack",
+  "scope": "Build processes, environment configuration, CI/CD setup, local development environment",
+  "rules": [
+    {
+      "rule": "Backend Build Process",
+      "description": ".NET Core 10 uses dotnet CLI for build, restore, and run",
+      "workingDirectory": "api/src",
+      "commands": {
+        "restore": "dotnet restore - Downloads NuGet packages",
+        "build": "dotnet build - Compiles project",
+        "run": "dotnet run - Runs on https://localhost:7001",
+        "clean": "dotnet clean - Removes build artifacts"
+      },
+      "firstTimeSetup": "Run 'dotnet restore' before first build"
+    },
+    {
+      "rule": "Frontend Build Process",
+      "description": "Angular 19 uses ng CLI with npm package manager",
+      "workingDirectory": "ui",
+      "commands": {
+        "npm install": "Installs dependencies (run once)",
+        "npm start": "ng serve - Dev server at http://localhost:4200 with live reload",
+        "npm run build": "Production build to dist/ folder",
+        "npm test": "Run Jasmine/Karma tests",
+        "npm run watch": "ng build --watch for development mode"
+      },
+      "firstTimeSetup": "Run 'npm install' before first start"
+    },
+    {
+      "rule": "Environment Configuration",
+      "description": "Backend reads appsettings.json + appsettings.{Environment}.json",
+      "files": [
+        "api/src/appsettings.json - Base configuration",
+        "api/src/appsettings.Development.json - Development overrides"
+      ],
+      "loadingOrder": "Base loaded first, then environment-specific overrides",
+      "environmentDetection": "IsDevelopment(), IsProduction() in Program.cs"
+    },
+    {
+      "rule": "HTTPS Development Certificates",
+      "description": ".NET local development uses auto-generated HTTPS certificates",
+      "certificate": "Located in user's certificate store",
+      "ifMissing": "Run: dotnet dev-certs https --trust",
+      "browsers": "May need to bypass warning for self-signed cert on first run"
+    },
+    {
+      "rule": "Project Structure Conventions",
+      "description": "Each project is independently buildable",
+      "backend": "api/src/FloatingAICopilot.csproj defines .NET project",
+      "frontend": "ui/package.json + ui/angular.json configure Angular project",
+      "separation": "Can be deployed independently or together"
+    },
+    {
+      "rule": "NuGet Package Management",
+      "description": "Backend dependencies declared in FloatingAICopilot.csproj",
+      "currentPackages": [
+        "Microsoft.AspNetCore.OpenApi (10.0.0)",
+        "Swashbuckle.AspNetCore (6.4.6) - Swagger generation"
+      ],
+      "addingDependency": "Edit .csproj file directly or: dotnet add package {name}"
+    },
+    {
+      "rule": "npm Package Management",
+      "description": "Frontend dependencies in package.json and package-lock.json",
+      "lockfile": "package-lock.json - Locks exact versions for reproducible installs",
+      "addingDependency": "npm install {package} or npm install --save-dev {package}"
+    },
+    {
+      "rule": "TypeScript Configuration",
+      "description": "Angular TypeScript settings with strict null checking",
+      "files": [
+        "ui/tsconfig.json - Base TypeScript config",
+        "ui/tsconfig.app.json - App-specific overrides",
+        "ui/tsconfig.spec.json - Test-specific overrides"
+      ],
+      "strictMode": "strict: true enables strict null checks"
+    },
+    {
+      "rule": "C# Project File",
+      "description": "Backend project configuration",
+      "location": "api/src/FloatingAICopilot.csproj",
+      "key": {
+        "TargetFramework": "net10.0",
+        "Nullable": "enable - Null safety enabled",
+        "ImplicitUsings": "enable - Global using statements"
+      }
+    },
+    {
+      "rule": "Port Configuration",
+      "description": "Backend HTTPS port can be customized",
+      "default": "https://localhost:7001",
+      "configuration": "launchSettings.json or environment variable",
+      "frontend": "Hardcoded to https://localhost:7001 in components"
+    },
+    {
+      "rule": "No CI/CD Currently Configured",
+      "description": "Project does not have GitHub Actions or other CI/CD",
+      "future": "Consider adding .github/workflows/ for automated testing and deployment"
+    }
+  ],
+  "commonPatterns": {
+    "developmentWorkflow": {
+      "description": "Typical local development setup",
+      "steps": [
+        "Terminal 1: cd api/src && dotnet run (Backend starts on localhost:7001)",
+        "Terminal 2: cd ui && npm start (Frontend starts on localhost:4200)",
+        "Browser: http://localhost:4200 (Angular dev server with live reload)",
+        "Make code changes in editor, browser auto-refreshes"
+      ]
+    },
+    "productionBuild": {
+      "description": "Build for production deployment",
+      "backend": "dotnet publish -c Release -o ./publish (Creates standalone .NET app)",
+      "frontend": "npm run build (Creates dist/ folder with optimized bundle)",
+      "deployment": "Deploy publish/ and dist/ to appropriate servers"
+    },
+    "troubleshooting": {
+      "backendWontStart": {
+        "issue": "Port 7001 already in use",
+        "solution": "Change port in Program.cs or end process using port 7001"
+      },
+      "npmDependencyError": {
+        "issue": "node_modules corrupted or outdated",
+        "solution": "rm package-lock.json && npm install (Clean reinstall)"
+      },
+      "certificateError": {
+        "issue": "HTTPS dev certificate issue",
+        "solution": "dotnet dev-certs https --trusted-cert-volume --trust"
+      }
+    }
+  },
+  "fileLocations": {
+    "backendProject": "api/src/FloatingAICopilot.csproj",
+    "backendPackages": "api/src/FloatingAICopilot.csproj (NuGet)",
+    "frontendProject": "ui/angular.json",
+    "frontendPackages": "ui/package.json (npm)",
+    "backendConfig": "api/src/appsettings.json",
+    "backendConfigDev": "api/src/appsettings.Development.json",
+    "frontendConfig": "ui/angular.json",
+    "typeScriptConfig": "ui/tsconfig.json"
+  },
+  "versions": {
+    "dotnetFramework": "net10.0",
+    "angular": "19.0.0",
+    "typescript": "5.6.0",
+    "npm": "Latest recommended"
+  },
+  "futureEnhancements": [
+    "Add GitHub Actions CI/CD workflow for automated testing",
+    "Extract API base URL to environment configuration",
+    "Add Docker support for containerized deployment",
+    "Set up Azure deployment pipeline",
+    "Add unit and integration tests"
+  ]
+}

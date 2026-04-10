@@ -1,0 +1,4 @@
+{
+  "chat.agentFilesLocations": [".github/agents"],
+  "chat.skillFilesLocations": [".github/skills"]
+}

@@ -1,0 +1,35 @@
+<div class="container">
+  <header>
+    <h1>{{ title }}</h1>
+    <p>AI-Powered Floating Assistant</p>
+  </header>
+
+  <main>
+    <section class="weather-section">
+      <h2>Weather Forecast</h2>
+
+      <button (click)="fetchWeatherData()" [disabled]="loading">
+        {{ loading ? "Loading..." : "Refresh Forecast" }}
+      </button>
+
+      <div class="weather-grid" *ngIf="weatherData.length > 0; else noData">
+        <div class="weather-card" *ngFor="let forecast of weatherData">
+          <div class="date">{{ forecast.date | date: "MMM dd, yyyy" }}</div>
+          <div class="temperature">
+            <span class="celsius">{{ forecast.temperatureC }}°C</span>
+            <span class="fahrenheit">{{ forecast.temperatureF }}°F</span>
+          </div>
+          <div class="summary">{{ forecast.summary }}</div>
+        </div>
+      </div>
+
+      <ng-template #noData>
+        <p class="no-data" *ngIf="!loading">No weather data available</p>
+      </ng-template>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2026 Floating AI Copilot. All rights reserved.</p>
+  </footer>
+</div>
